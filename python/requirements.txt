@@ -1,2 +1,9 @@
+# OpenCV para Python sem componentes de interface grafica.
+# A biblioteca e usada como infraestrutura de leitura, escrita e acesso
+# aos dados da imagem. As operacoes avaliadas continuam sendo implementadas
+# manualmente pelo estudante.
 opencv-python-headless==4.14.0.94
+
+# Framework utilizado pelos testes publicos do template e pelos testes
+# adicionais que o estudante decidir escrever.
 pytest==9.0.2
