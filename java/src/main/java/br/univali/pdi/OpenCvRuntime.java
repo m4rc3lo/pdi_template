@@ -1,0 +1,1 @@
+package br.univali.pdi; public final class OpenCvRuntime { private static boolean loaded=false; private OpenCvRuntime(){} public static synchronized void ensureLoaded(){ if(!loaded){ nu.pattern.OpenCV.loadLocally(); loaded=true; } } }
