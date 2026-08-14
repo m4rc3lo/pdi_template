@@ -10,6 +10,10 @@ import java.util.List;
 public final class KernelIO {
     private KernelIO() {}
 
+    private static PdiException invalidKernel(String message) {
+        return new PdiException(ExitCode.INVALID_PARAMETER, message);
+    }
+
     public static Kernel read(Path path) {
         final List<String> lines;
         try {
@@ -35,28 +39,26 @@ public final class KernelIO {
                 try {
                     row[i] = Double.parseDouble(tokens[i]);
                 } catch (NumberFormatException error) {
-                    throw new IllegalArgumentException(
-                        "Coeficiente invalido no kernel: " + tokens[i], error
-                    );
+                    throw invalidKernel("Coeficiente invalido no kernel: " + tokens[i]);
                 }
             }
             rows.add(row);
         }
 
         if (rows.isEmpty()) {
-            throw new IllegalArgumentException("O arquivo de kernel esta vazio.");
+            throw invalidKernel("O arquivo de kernel esta vazio.");
         }
 
         int size = rows.get(0).length;
         if (size == 0 || rows.size() != size || size % 2 == 0) {
-            throw new IllegalArgumentException("O kernel deve ser quadrado e possuir dimensao impar.");
+            throw invalidKernel("O kernel deve ser quadrado e possuir dimensao impar.");
         }
 
         double[] values = new double[size * size];
         int index = 0;
         for (double[] row : rows) {
             if (row.length != size) {
-                throw new IllegalArgumentException("Todas as linhas do kernel devem ter o mesmo tamanho.");
+                throw invalidKernel("Todas as linhas do kernel devem ter o mesmo tamanho.");
             }
             for (double value : row) {
                 values[index++] = value;
