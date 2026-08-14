@@ -1,9 +1,28 @@
 #include "pdi/cli.hpp"
 
+#include <array>
 #include <iostream>
 #include <stdexcept>
+#include <string_view>
 
 namespace pdi {
+namespace {
+
+constexpr std::array<std::string_view, 7> parameter_names {
+    "value", "levels", "threshold", "alpha", "kernel", "border", "size"
+};
+
+bool is_known_parameter(std::string_view name)
+{
+    for (const auto candidate : parameter_names) {
+        if (candidate == name) {
+            return true;
+        }
+    }
+    return false;
+}
+
+} // namespace
 
 CliOptions parse_cli(int argc, char** argv)
 {
@@ -36,10 +55,12 @@ CliOptions parse_cli(int argc, char** argv)
             options.input = value;
         } else if (name == "output") {
             options.output = value;
-        } else {
-            // Os demais parâmetros são convertidos e validados pela camada
+        } else if (is_known_parameter(name)) {
+            // Os parâmetros conhecidos são convertidos e validados pela camada
             // de contrato antes de chegarem ao algoritmo do estudante.
             options.parameters[name] = value;
+        } else {
+            throw std::invalid_argument("Opcao desconhecida: --" + name);
         }
     }
 
@@ -55,13 +76,13 @@ void print_help()
         << "  pdi_lab --help\n"
         << "  pdi_lab --version\n\n"
         << "Parametros comuns:\n"
-        << "  --value <inteiro>       brilho\n"
-        << "  --levels <2|4|8|16>     quantizacao\n"
-        << "  --threshold <0..255>    limiarizacao\n"
-        << "  --alpha <real>          contraste\n"
-        << "  --kernel <arquivo>      convolucao generica\n"
-        << "  --border <copy|replicate> estrategia de borda\n"
-        << "  --size <3|5>            tamanho do filtro de media\n\n"
+        << "  --value <inteiro>          brilho\n"
+        << "  --levels <2|4|8|16>        quantizacao\n"
+        << "  --threshold <0..255>       limiarizacao\n"
+        << "  --alpha <real>             contraste\n"
+        << "  --kernel <arquivo>         convolucao generica\n"
+        << "  --border <copy|replicate>  estrategia de borda\n"
+        << "  --size <3|5>               tamanho do filtro de media\n\n"
         << "Operacoes M1.1:\n"
         << "  inspect, copy, channel_b, channel_g, channel_r,\n"
         << "  grayscale_average, grayscale_weighted, quantize\n\n"
