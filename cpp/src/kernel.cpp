@@ -51,12 +51,24 @@ Kernel read_kernel(const std::filesystem::path& path)
         if (line.empty() || line.starts_with('#')) {
             continue;
         }
-        std::istringstream values(line);
+
+        std::istringstream tokens(line);
         std::vector<double> row;
-        double value = 0.0;
-        while (values >> value) {
+        std::string token;
+        while (tokens >> token) {
+            std::size_t consumed = 0;
+            double value = 0.0;
+            try {
+                value = std::stod(token, &consumed);
+            } catch (const std::exception&) {
+                throw std::invalid_argument("Coeficiente invalido no kernel: " + token);
+            }
+            if (consumed != token.size()) {
+                throw std::invalid_argument("Coeficiente invalido no kernel: " + token);
+            }
             row.push_back(value);
         }
+
         if (!row.empty()) {
             rows.push_back(std::move(row));
         }
