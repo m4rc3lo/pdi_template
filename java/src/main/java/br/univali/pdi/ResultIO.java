@@ -15,14 +15,24 @@ import java.util.Map;
 public final class ResultIO {
     private ResultIO() {}
 
-    public static void ensureParentDirectory(Path path) throws IOException {
+    public static void ensureParentDirectory(Path path) {
         Path parent = path.getParent();
-        if (parent != null) {
+        if (parent == null) {
+            return;
+        }
+
+        try {
             Files.createDirectories(parent);
+        } catch (IOException error) {
+            throw new PdiException(
+                ExitCode.WRITE_ERROR,
+                "Nao foi possivel criar o diretorio de saida: " + parent,
+                error
+            );
         }
     }
 
-    public static void writeHistogramCsv(Path path, long[] histogram) throws IOException {
+    public static void writeHistogramCsv(Path path, long[] histogram) {
         if (histogram == null || histogram.length != 256) {
             throw new IllegalArgumentException("O histograma deve possuir 256 posicoes.");
         }
@@ -35,10 +45,16 @@ public final class ResultIO {
                 writer.write(i + "," + histogram[i]);
                 writer.newLine();
             }
+        } catch (IOException error) {
+            throw new PdiException(
+                ExitCode.WRITE_ERROR,
+                "Nao foi possivel criar o CSV: " + path,
+                error
+            );
         }
     }
 
-    public static void writeJsonObject(Path path, Map<String, String> values) throws IOException {
+    public static void writeJsonObject(Path path, Map<String, String> values) {
         ensureParentDirectory(path);
         try (BufferedWriter writer = Files.newBufferedWriter(path)) {
             writer.write("{");
@@ -53,6 +69,12 @@ public final class ResultIO {
             }
             writer.write("}");
             writer.newLine();
+        } catch (IOException error) {
+            throw new PdiException(
+                ExitCode.WRITE_ERROR,
+                "Nao foi possivel criar o JSON: " + path,
+                error
+            );
         }
     }
 
