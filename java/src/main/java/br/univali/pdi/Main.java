@@ -1,16 +1,45 @@
 package br.univali.pdi;
+
+/** Ponto de entrada: coordena a infraestrutura sem conter algoritmos de PDI. */
 public final class Main {
     private Main() {}
-    public static void main(String[] args) { int c=execute(args); if(c!=0) System.exit(c); }
+
+    public static void main(String[] args) {
+        int code = execute(args);
+        if (code != ExitCode.SUCCESS) {
+            System.exit(code);
+        }
+    }
+
     static int execute(String[] args) {
         try {
-            CliOptions o=CliParser.parse(args);
-            if(o.help){ CliParser.printHelp(); return 0; }
-            if(o.version){ CliParser.printVersion(); return 0; }
-            Contract.Result v=Contract.validate(o);
-            if(!v.ok()){ System.err.println("Erro: "+v.message()); return v.code(); }
-            return Operations.run(o);
-        } catch(IllegalArgumentException e){ System.err.println("Erro de argumentos: "+e.getMessage()); return 2; }
-        catch(Exception e){ System.err.println("Erro: "+e.getMessage()); return 1; }
+            CliOptions options = CliParser.parse(args);
+
+            if (options.help) {
+                CliParser.printHelp();
+                return ExitCode.SUCCESS;
+            }
+            if (options.version) {
+                CliParser.printVersion();
+                return ExitCode.SUCCESS;
+            }
+
+            Contract.Result validation = Contract.validate(options);
+            if (!validation.ok()) {
+                System.err.println("Erro: " + validation.message());
+                return validation.code();
+            }
+
+            return Operations.run(options);
+        } catch (PdiException error) {
+            System.err.println("Erro: " + error.getMessage());
+            return error.code();
+        } catch (IllegalArgumentException error) {
+            System.err.println("Erro de argumentos: " + error.getMessage());
+            return ExitCode.INVALID_ARGUMENTS;
+        } catch (Exception error) {
+            System.err.println("Erro: " + error.getMessage());
+            return ExitCode.GENERAL_ERROR;
+        }
     }
 }
