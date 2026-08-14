@@ -10,10 +10,20 @@ import java.util.List;
 public final class KernelIO {
     private KernelIO() {}
 
-    public static Kernel read(Path path) throws IOException {
-        List<double[]> rows = new ArrayList<>();
+    public static Kernel read(Path path) {
+        final List<String> lines;
+        try {
+            lines = Files.readAllLines(path);
+        } catch (IOException error) {
+            throw new PdiException(
+                ExitCode.READ_ERROR,
+                "Nao foi possivel abrir o kernel: " + path,
+                error
+            );
+        }
 
-        for (String rawLine : Files.readAllLines(path)) {
+        List<double[]> rows = new ArrayList<>();
+        for (String rawLine : lines) {
             String line = rawLine.trim();
             if (line.isEmpty() || line.startsWith("#")) {
                 continue;
