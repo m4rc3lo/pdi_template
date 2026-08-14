@@ -1,20 +1,61 @@
 from __future__ import annotations
+
 import argparse
 from dataclasses import dataclass, field
+
+
 @dataclass
 class CliOptions:
+    """Representação comum dos argumentos recebidos pela aplicação."""
+
     operation: str | None = None
     input: str | None = None
     output: str | None = None
-    parameters: dict[str,str] = field(default_factory=dict)
+    version: bool = False
+    parameters: dict[str, str] = field(default_factory=dict)
+
+
 def build_parser() -> argparse.ArgumentParser:
-    p=argparse.ArgumentParser(prog="pdi_lab",description="Projeto-base dos laboratorios M1")
-    p.add_argument("--version",action="store_true")
-    for name in ["operation","input","output","value","levels","threshold","alpha","kernel","border"]:
-        p.add_argument(f"--{name}")
-    return p
-def parse_cli(argv=None):
-    d=vars(build_parser().parse_args(argv)); version=d.pop("version"); operation=d.pop("operation"); inp=d.pop("input"); out=d.pop("output")
-    params={k:v for k,v in d.items() if v is not None}
-    o=CliOptions(operation,inp,out,params); o.parameters["__version_flag__"]="1" if version else "0"; return o
-def version_requested(o:CliOptions)->bool: return o.parameters.pop("__version_flag__", "0")=="1"
+    parser = argparse.ArgumentParser(
+        prog="pdi_lab",
+        description="Projeto-base dos laboratorios M1 de Processamento de Imagens",
+    )
+    parser.add_argument("--version", action="store_true")
+
+    # As três linguagens expõem os mesmos nomes de parâmetros.
+    for name in [
+        "operation",
+        "input",
+        "output",
+        "value",
+        "levels",
+        "threshold",
+        "alpha",
+        "kernel",
+        "border",
+        "size",
+    ]:
+        parser.add_argument(f"--{name}")
+
+    return parser
+
+
+def parse_cli(argv=None) -> CliOptions:
+    values = vars(build_parser().parse_args(argv))
+    version = bool(values.pop("version"))
+    operation = values.pop("operation")
+    input_path = values.pop("input")
+    output_path = values.pop("output")
+    parameters = {name: value for name, value in values.items() if value is not None}
+
+    return CliOptions(
+        operation=operation,
+        input=input_path,
+        output=output_path,
+        version=version,
+        parameters=parameters,
+    )
+
+
+def version_requested(options: CliOptions) -> bool:
+    return options.version
