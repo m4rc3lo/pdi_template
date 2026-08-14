@@ -8,15 +8,23 @@
 #include <utility>
 
 namespace pdi {
+namespace {
+
+[[noreturn]] void invalid_kernel(const std::string& message)
+{
+    throw PdiError(ExitCode::invalid_parameter, message);
+}
+
+} // namespace
 
 Kernel::Kernel(std::size_t size, std::vector<double> values)
     : size_(size), values_(std::move(values))
 {
     if (size_ == 0 || size_ % 2 == 0) {
-        throw std::invalid_argument("O kernel deve ter dimensao impar e maior que zero.");
+        invalid_kernel("O kernel deve ter dimensao impar e maior que zero.");
     }
     if (values_.size() != size_ * size_) {
-        throw std::invalid_argument("A quantidade de coeficientes nao corresponde ao tamanho do kernel.");
+        invalid_kernel("A quantidade de coeficientes nao corresponde ao tamanho do kernel.");
     }
 }
 
@@ -61,10 +69,10 @@ Kernel read_kernel(const std::filesystem::path& path)
             try {
                 value = std::stod(token, &consumed);
             } catch (const std::exception&) {
-                throw std::invalid_argument("Coeficiente invalido no kernel: " + token);
+                invalid_kernel("Coeficiente invalido no kernel: " + token);
             }
             if (consumed != token.size()) {
-                throw std::invalid_argument("Coeficiente invalido no kernel: " + token);
+                invalid_kernel("Coeficiente invalido no kernel: " + token);
             }
             row.push_back(value);
         }
@@ -75,22 +83,22 @@ Kernel read_kernel(const std::filesystem::path& path)
     }
 
     if (rows.empty()) {
-        throw std::invalid_argument("O arquivo de kernel esta vazio.");
+        invalid_kernel("O arquivo de kernel esta vazio.");
     }
 
     const auto size = rows.front().size();
     if (size == 0 || rows.size() != size) {
-        throw std::invalid_argument("O kernel deve ser quadrado.");
+        invalid_kernel("O kernel deve ser quadrado.");
     }
     if (size % 2 == 0) {
-        throw std::invalid_argument("O kernel deve possuir dimensao impar.");
+        invalid_kernel("O kernel deve possuir dimensao impar.");
     }
 
     std::vector<double> flattened;
     flattened.reserve(size * size);
     for (const auto& row : rows) {
         if (row.size() != size) {
-            throw std::invalid_argument("Todas as linhas do kernel devem ter o mesmo tamanho.");
+            invalid_kernel("Todas as linhas do kernel devem ter o mesmo tamanho.");
         }
         flattened.insert(flattened.end(), row.begin(), row.end());
     }
