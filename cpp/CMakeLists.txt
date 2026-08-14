@@ -21,13 +21,24 @@ include(CTest)
 # Centraliza a descoberta do OpenCV, inclusive para instalacoes portateis.
 include(cmake/PdiOpenCV.cmake)
 
-# A biblioteca pdi_core contem a infraestrutura comum da aplicacao.
-# Os algoritmos dos laboratorios permanecem sem implementacao no template.
+# A biblioteca pdi_core contem a infraestrutura comum da aplicacao:
+# - leitura da linha de comando;
+# - validacao do contrato;
+# - leitura e escrita de imagens;
+# - conversao de parametros;
+# - leitura de kernels;
+# - escrita de CSV e JSON;
+# - despacho das operacoes.
+#
+# Os algoritmos avaliados permanecem sem implementacao no template.
 add_library(pdi_core
     src/cli.cpp
     src/contract.cpp
     src/image_io.cpp
+    src/kernel.cpp
     src/operations.cpp
+    src/parameters.cpp
+    src/result_io.cpp
 )
 
 # Alias para tornar a dependencia mais explicita nos demais alvos.
