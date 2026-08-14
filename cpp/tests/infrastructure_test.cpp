@@ -1,4 +1,5 @@
 #include "pdi/contract.hpp"
+#include "pdi/image_io.hpp"
 #include "pdi/kernel.hpp"
 #include "pdi/parameters.hpp"
 #include "pdi/result_io.hpp"
@@ -34,10 +35,23 @@ int main()
     assert(pdi::validate_contract(convolution));
     assert(pdi::parameter_as_border(convolution) == pdi::BorderStrategy::replicate);
 
-    // Arquivos temporários criados dentro de build/ pelo runner do teste.
+    // O teste é executado com a raiz do projeto C++ como working directory.
+    // Assim ele pode usar uma das imagens públicas sem depender de um caminho
+    // absoluto específico da máquina do estudante.
+    const auto image = pdi::read_image("images/input/m1_color_2x2.png");
+    assert(!image.empty());
+    assert(image.rows == 2);
+    assert(image.cols == 2);
+
     const fs::path root = fs::current_path() / "pdi_test_tmp";
     fs::remove_all(root);
     fs::create_directories(root);
+
+    // A gravação aqui apenas testa a infraestrutura de I/O. Ela não substitui
+    // a implementação da cópia manual exigida no M1.1.
+    const fs::path image_path = root / "nested" / "image.png";
+    pdi::write_image(image_path.string(), image);
+    assert(fs::exists(image_path));
 
     const fs::path kernel_path = root / "identity.txt";
     {
