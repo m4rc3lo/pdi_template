@@ -1,4 +1,5 @@
 #include "pdi/kernel.hpp"
+#include "pdi/errors.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -41,7 +42,7 @@ Kernel read_kernel(const std::filesystem::path& path)
 {
     std::ifstream input(path);
     if (!input) {
-        throw std::runtime_error("Nao foi possivel abrir o kernel: " + path.string());
+        throw PdiError(ExitCode::read_error, "Nao foi possivel abrir o kernel: " + path.string());
     }
 
     std::vector<std::vector<double>> rows;
