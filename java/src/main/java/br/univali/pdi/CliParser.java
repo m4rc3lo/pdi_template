@@ -1,7 +1,13 @@
 package br.univali.pdi;
 
+import java.util.Set;
+
 /** Leitura simples e uniforme da linha de comando. */
 public final class CliParser {
+    private static final Set<String> PARAMETER_NAMES = Set.of(
+        "value", "levels", "threshold", "alpha", "kernel", "border", "size"
+    );
+
     private CliParser() {}
 
     public static CliOptions parse(String[] args) {
@@ -32,7 +38,12 @@ public final class CliParser {
                 case "operation" -> options.operation = value;
                 case "input" -> options.input = value;
                 case "output" -> options.output = value;
-                default -> options.parameters.put(name, value);
+                default -> {
+                    if (!PARAMETER_NAMES.contains(name)) {
+                        throw new IllegalArgumentException("Opcao desconhecida: --" + name);
+                    }
+                    options.parameters.put(name, value);
+                }
             }
         }
 
