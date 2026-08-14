@@ -41,13 +41,14 @@ def write_histogram_csv(path: str | Path, histogram: Sequence[int]) -> None:
         ) from error
 
 
-def write_json_object(path: str | Path, values: Mapping[str, object]) -> None:
-    """Serializa metadados simples sem interferir no algoritmo avaliado."""
+def write_json_object(path: str | Path, values: Mapping[str, str]) -> None:
+    """Serializa pares texto->texto, como nas variantes C++ e Java."""
 
     output = ensure_parent_directory(path)
+    normalized = {str(key): str(value) for key, value in values.items()}
     try:
         with output.open("w", encoding="utf-8") as file:
-            json.dump(values, file, ensure_ascii=False, indent=2)
+            json.dump(normalized, file, ensure_ascii=False, indent=2)
             file.write("\n")
     except OSError as error:
         raise PdiError(
