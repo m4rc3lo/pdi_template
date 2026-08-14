@@ -1,6 +1,5 @@
 package br.univali.pdi;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -24,15 +23,7 @@ public final class ImageIO {
             throw new PdiException(ExitCode.WRITE_ERROR, "A imagem de saida esta vazia.");
         }
 
-        try {
-            ResultIO.ensureParentDirectory(Path.of(path));
-        } catch (IOException error) {
-            throw new PdiException(
-                ExitCode.WRITE_ERROR,
-                "Nao foi possivel criar o diretorio de saida: " + path,
-                error
-            );
-        }
+        ResultIO.ensureParentDirectory(Path.of(path));
 
         if (!Imgcodecs.imwrite(path, image)) {
             throw new PdiException(ExitCode.WRITE_ERROR, "Nao foi possivel salvar a imagem: " + path);
