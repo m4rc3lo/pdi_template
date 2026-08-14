@@ -8,9 +8,21 @@ Este pacote contém três projetos-base equivalentes para os laboratórios indiv
 
 As três versões preservam o mesmo contrato externo de execução. A linguagem muda; o que será solicitado e avaliado permanece equivalente.
 
-## O que este projeto-base resolve para você
+## O objetivo do template
 
-A intenção é permitir que você concentre o trabalho nos algoritmos de Processamento de Imagens. A infraestrutura geral será fornecida e documentada: organização do projeto, construção, execução em terminal, leitura de parâmetros, entrada e saída de arquivos, tratamento dos principais erros e testes da própria infraestrutura.
+A intenção é permitir que você concentre seu tempo nos algoritmos de Processamento de Imagens. A infraestrutura geral já cuida de:
+
+- organização do projeto;
+- construção ou instalação;
+- execução em terminal;
+- leitura e validação de parâmetros;
+- leitura e escrita de imagens;
+- criação de diretórios de saída;
+- leitura e validação estrutural de kernels;
+- escrita de CSV;
+- escrita de JSON;
+- mensagens e códigos de erro da infraestrutura;
+- testes públicos da própria base.
 
 As operações avaliadas continuam sem implementação. Você deverá escrever o percurso dos pixels ou vizinhanças, os cálculos, o tratamento numérico pertinente ao algoritmo e os testes específicos solicitados no roteiro.
 
@@ -47,36 +59,39 @@ flowchart TD
 
 Forma geral:
 
-```bash
-pdi_lab \
-  --input <arquivo> \
-  --output <arquivo-ou-diretorio> \
-  --operation <operacao> \
-  [opcoes]
+```text
+pdi_lab --operation <operacao> --input <arquivo> --output <arquivo> [parametros]
 ```
+
+`inspect` é a única operação que não exige `--output`.
 
 Parâmetros previstos no contrato da M1:
 
-- `--value`;
-- `--levels`;
-- `--threshold`;
-- `--alpha`;
-- `--kernel`;
-- `--border`.
+- `--value` — valor inteiro usado por brilho;
+- `--levels` — `2`, `4`, `8` ou `16`;
+- `--threshold` — inteiro entre `0` e `255`;
+- `--alpha` — fator real positivo;
+- `--kernel` — caminho de um kernel textual;
+- `--border` — `copy` ou `replicate`;
+- `--size` — `3` ou `5` para `mean_filter`.
 
-As operações obrigatórias são as mesmas nas três linguagens:
+A validação desses valores é fornecida pelo projeto-base. O estudante não precisa escrever parsing de strings para cada algoritmo.
 
-### M1.1
+## Operações obrigatórias
+
+### M1.1 — representação, canais e níveis de cinza
 
 `inspect`, `copy`, `channel_b`, `channel_g`, `channel_r`, `grayscale_average`, `grayscale_weighted`, `quantize`.
 
-### M1.2
+### M1.2 — transformações de intensidade
 
 `brightness`, `contrast`, `negative`, `threshold`, `histogram`.
 
-### M1.3
+### M1.3 — convolução e filtragem espacial
 
 `convolution`, `mean_filter`, `weighted_mean`, `laplacian`, `sobel`.
+
+As atividades complementares dos roteiros não são transformadas em requisitos adicionais do contrato mínimo.
 
 ## Estrutura comum
 
@@ -100,22 +115,37 @@ arquivo-de-construcao-ou-dependencias
 ## O que deve permanecer equivalente entre as linguagens
 
 - nomes das operações;
-- parâmetros da linha de comando;
+- nomes e significado dos parâmetros;
+- valores considerados válidos;
 - formatos das imagens e kernels fornecidos;
 - formato CSV e JSON produzido pela infraestrutura;
 - códigos de saída;
 - comportamento das validações gerais;
 - conjunto de imagens-base;
-- testes públicos equivalentes.
+- finalidade dos testes públicos.
 
 A estrutura interna não precisa ser artificialmente idêntica: C++, Java e Python seguem convenções próprias.
 
+## Antes de implementar o laboratório
+
+1. leia o `README.md` da linguagem escolhida;
+2. prepare o ambiente;
+3. construa ou instale o projeto;
+4. execute os testes públicos;
+5. execute `--help` e `--version`;
+6. somente depois comece a alterar as operações do laboratório.
+
+Se a base recém-extraída não passa nos testes públicos, investigue o ambiente antes de modificar os algoritmos.
+
 ## Documentação comum
 
-Leia também a pasta `docs/`:
+A pasta `docs/` complementa os READMEs:
 
 - `00-padrao-comum-das-tres-linguagens.md` — o que deve ser equivalente;
 - `01-como-usar-o-template.md` — sequência recomendada de trabalho;
-- `02-interface-cli.md` — contrato da interface de linha de comando.
+- `02-interface-cli.md` — contrato da linha de comando;
+- `04-entrada-saida-e-kernels.md` — imagens, CSV, JSON e kernels;
+- `05-testes-publicos.md` — diferença entre testar infraestrutura e algoritmo;
+- `90-validacao-manual-antes-do-release.md` — checklist usado pelo professor antes da publicação do template.
 
-Depois consulte o `README.md` da linguagem escolhida para os comandos de construção, instalação, teste e execução.
+Depois consulte o `README.md` da linguagem escolhida para os comandos específicos de construção, instalação, teste e execução.
