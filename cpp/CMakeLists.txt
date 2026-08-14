@@ -74,9 +74,14 @@ endif()
 add_executable(pdi_lab src/main.cpp)
 target_link_libraries(pdi_lab PRIVATE pdi::core)
 
-# Os testes de infraestrutura sao construidos quando BUILD_TESTING=ON.
+# Os testes abaixo verificam apenas a infraestrutura fornecida.
+# Eles não implementam nem validam a corretude dos algoritmos avaliados.
 if(BUILD_TESTING)
     add_executable(pdi_smoke_test tests/smoke_test.cpp)
     target_link_libraries(pdi_smoke_test PRIVATE pdi::core)
     add_test(NAME pdi_smoke_test COMMAND pdi_smoke_test)
+
+    add_executable(pdi_infrastructure_test tests/infrastructure_test.cpp)
+    target_link_libraries(pdi_infrastructure_test PRIVATE pdi::core)
+    add_test(NAME pdi_infrastructure_test COMMAND pdi_infrastructure_test)
 endif()
