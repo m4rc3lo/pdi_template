@@ -94,7 +94,7 @@ Execute casos equivalentes nas três linguagens.
 Deve falhar informando a ausência de `--levels`:
 
 ```text
---operation quantize --input images/input/test.png --output images/output/q.png
+--operation quantize --input images/input/m1_gray_ramp_256.png --output images/output/q.png
 ```
 
 ### Quantização inválida
@@ -153,9 +153,7 @@ Valide separadamente:
 
 ## 8. Imagens-base
 
-Antes do release, copie o conjunto público de imagens para `images/input/` das três variantes ou gere o ZIP final de modo que cada linguagem receba o mesmo conjunto.
-
-Confirme a presença de, pelo menos:
+O conjunto público já deve estar presente em `images/input/` nas três variantes. Confirme que os arquivos são idênticos entre C++, Java e Python e que os nomes abaixo estão disponíveis:
 
 ```text
 m1_color_2x2.png
@@ -172,6 +170,16 @@ m1_checkerboard_256.png
 m1_gray_5x5.png
 ```
 
+Abra visualmente algumas imagens e confirme especialmente:
+
+- `m1_color_2x2.png`: quatro cores simples para conferência manual;
+- `m1_gray_ramp_256.png`: rampa de intensidade;
+- `m1_constant_128_64.png`: imagem constante;
+- `m1_impulse_33.png`: impulso central;
+- `m1_step_vertical_128.png` e `m1_step_horizontal_128.png`: degraus nas duas orientações;
+- `m1_shapes_border_256.png`: conteúdo tocando as bordas;
+- `m1_gray_5x5.png`: caso pequeno para conferência de convolução.
+
 ## 9. Verificação pedagógica final
 
 Abra o ZIP como se fosse estudante e verifique se, sem conhecer o repositório original, é possível descobrir:
@@ -185,6 +193,8 @@ Abra o ZIP como se fosse estudante e verifique se, sem conhecer o repositório o
 7. onde estão as imagens de entrada;
 8. onde salvar os resultados;
 9. como preencher `REPORT.md`, `AI_USAGE.md` e `lab.json`.
+
+A experiência ideal é que o estudante consiga chegar até os stubs das operações sem precisar modificar parser, build, leitura de imagem, serialização ou tratamento geral de erros.
 
 ## 10. Condição para merge e release
 
