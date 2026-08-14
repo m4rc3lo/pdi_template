@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.junit.Test;
+import org.opencv.core.Mat;
 
 public class InfrastructureTest {
     @Test
@@ -22,6 +23,24 @@ public class InfrastructureTest {
 
         options.parameters.put("levels", "3");
         assertFalse(Contract.validate(options).ok());
+    }
+
+    @Test
+    public void readsAndWritesImageInfrastructure() throws Exception {
+        Mat image = ImageIO.read("images/input/m1_color_2x2.png");
+        assertFalse(image.empty());
+        assertEquals(2, image.rows());
+        assertEquals(2, image.cols());
+
+        Path root = Files.createTempDirectory("pdi-template-image-test");
+        try {
+            Path output = root.resolve("nested/image.png");
+            ImageIO.write(output.toString(), image);
+            assertTrue(Files.exists(output));
+        } finally {
+            image.release();
+            deleteTree(root);
+        }
     }
 
     @Test
@@ -50,15 +69,19 @@ public class InfrastructureTest {
             ResultIO.writeJsonObject(jsonPath, metadata);
             assertTrue(Files.exists(jsonPath));
         } finally {
-            try (var paths = Files.walk(root)) {
-                paths.sorted((a, b) -> b.compareTo(a)).forEach(path -> {
-                    try {
-                        Files.deleteIfExists(path);
-                    } catch (Exception ignored) {
-                        // Limpeza de arquivo temporário do teste.
-                    }
-                });
-            }
+            deleteTree(root);
+        }
+    }
+
+    private static void deleteTree(Path root) throws Exception {
+        try (var paths = Files.walk(root)) {
+            paths.sorted((a, b) -> b.compareTo(a)).forEach(path -> {
+                try {
+                    Files.deleteIfExists(path);
+                } catch (Exception ignored) {
+                    // Limpeza de arquivo temporário do teste.
+                }
+            });
         }
     }
 }
