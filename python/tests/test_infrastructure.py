@@ -2,6 +2,7 @@ from pathlib import Path
 
 from pdi_lab.cli import CliOptions
 from pdi_lab.contract import validate_contract
+from pdi_lab.image_io import read_image, write_image
 from pdi_lab.kernel import read_kernel
 from pdi_lab.parameters import BorderStrategy, parameter_as_border, parameter_as_int
 from pdi_lab.result_io import write_histogram_csv, write_json_object
@@ -28,6 +29,16 @@ def test_typed_parameters_and_contract():
     )
     assert validate_contract(convolution).ok
     assert parameter_as_border(convolution) is BorderStrategy.REPLICATE
+
+
+def test_image_read_and_write(tmp_path: Path):
+    image = read_image("images/input/m1_color_2x2.png")
+    assert image.shape[0] == 2
+    assert image.shape[1] == 2
+
+    output = tmp_path / "nested" / "image.png"
+    write_image(str(output), image)
+    assert output.exists()
 
 
 def test_kernel_csv_and_json(tmp_path: Path):
