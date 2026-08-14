@@ -3,6 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 
+from . import exit_code
+from .errors import PdiError
+
 
 @dataclass(frozen=True)
 class Kernel:
@@ -30,8 +33,17 @@ class Kernel:
 def read_kernel(path: str | Path) -> Kernel:
     """Lê o arquivo; aplicar a convolução continua sendo tarefa do estudante."""
 
+    input_path = Path(path)
+    try:
+        lines = input_path.read_text(encoding="utf-8").splitlines()
+    except OSError as error:
+        raise PdiError(
+            exit_code.READ_ERROR,
+            f"Nao foi possivel abrir o kernel: {input_path}",
+        ) from error
+
     rows: list[list[float]] = []
-    for raw_line in Path(path).read_text(encoding="utf-8").splitlines():
+    for raw_line in lines:
         line = raw_line.strip()
         if not line or line.startswith("#"):
             continue
