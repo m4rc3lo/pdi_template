@@ -4,10 +4,16 @@ package br.univali.pdi;
 public record Kernel(int size, double[] values) {
     public Kernel {
         if (size <= 0 || size % 2 == 0) {
-            throw new IllegalArgumentException("O kernel deve ter dimensao impar e maior que zero.");
+            throw new PdiException(
+                ExitCode.INVALID_PARAMETER,
+                "O kernel deve ter dimensao impar e maior que zero."
+            );
         }
         if (values == null || values.length != size * size) {
-            throw new IllegalArgumentException("Quantidade de coeficientes invalida para o kernel.");
+            throw new PdiException(
+                ExitCode.INVALID_PARAMETER,
+                "Quantidade de coeficientes invalida para o kernel."
+            );
         }
         values = values.clone();
     }
