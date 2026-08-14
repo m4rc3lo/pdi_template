@@ -1,0 +1,58 @@
+package br.univali.pdi;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.List;
+
+/** Leitura de kernel fornecida como infraestrutura do projeto-base. */
+public final class KernelIO {
+    private KernelIO() {}
+
+    public static Kernel read(Path path) throws IOException {
+        List<double[]> rows = new ArrayList<>();
+
+        for (String rawLine : Files.readAllLines(path)) {
+            String line = rawLine.trim();
+            if (line.isEmpty() || line.startsWith("#")) {
+                continue;
+            }
+
+            String[] tokens = line.split("\\s+");
+            double[] row = new double[tokens.length];
+            for (int i = 0; i < tokens.length; i++) {
+                try {
+                    row[i] = Double.parseDouble(tokens[i]);
+                } catch (NumberFormatException error) {
+                    throw new IllegalArgumentException(
+                        "Coeficiente invalido no kernel: " + tokens[i], error
+                    );
+                }
+            }
+            rows.add(row);
+        }
+
+        if (rows.isEmpty()) {
+            throw new IllegalArgumentException("O arquivo de kernel esta vazio.");
+        }
+
+        int size = rows.get(0).length;
+        if (size == 0 || rows.size() != size || size % 2 == 0) {
+            throw new IllegalArgumentException("O kernel deve ser quadrado e possuir dimensao impar.");
+        }
+
+        double[] values = new double[size * size];
+        int index = 0;
+        for (double[] row : rows) {
+            if (row.length != size) {
+                throw new IllegalArgumentException("Todas as linhas do kernel devem ter o mesmo tamanho.");
+            }
+            for (double value : row) {
+                values[index++] = value;
+            }
+        }
+
+        return new Kernel(size, values);
+    }
+}
