@@ -1,7 +1,7 @@
 #include "pdi/result_io.hpp"
+#include "pdi/errors.hpp"
 
 #include <fstream>
-#include <iomanip>
 #include <stdexcept>
 
 namespace pdi {
@@ -38,10 +38,15 @@ void write_histogram_csv(
     const std::filesystem::path& path,
     const std::array<std::uint64_t, 256>& histogram)
 {
-    ensure_parent_directory(path);
+    try {
+        ensure_parent_directory(path);
+    } catch (const std::exception& error) {
+        throw PdiError(ExitCode::write_error, "Nao foi possivel preparar o CSV: " + std::string(error.what()));
+    }
+
     std::ofstream output(path);
     if (!output) {
-        throw std::runtime_error("Nao foi possivel criar o CSV: " + path.string());
+        throw PdiError(ExitCode::write_error, "Nao foi possivel criar o CSV: " + path.string());
     }
 
     output << "intensity,count\n";
@@ -52,10 +57,15 @@ void write_histogram_csv(
 
 void write_json_object(const std::filesystem::path& path, const StringMap& values)
 {
-    ensure_parent_directory(path);
+    try {
+        ensure_parent_directory(path);
+    } catch (const std::exception& error) {
+        throw PdiError(ExitCode::write_error, "Nao foi possivel preparar o JSON: " + std::string(error.what()));
+    }
+
     std::ofstream output(path);
     if (!output) {
-        throw std::runtime_error("Nao foi possivel criar o JSON: " + path.string());
+        throw PdiError(ExitCode::write_error, "Nao foi possivel criar o JSON: " + path.string());
     }
 
     output << "{\n";
