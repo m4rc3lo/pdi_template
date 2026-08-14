@@ -13,7 +13,7 @@ public final class ImageIO {
         OpenCvRuntime.ensureLoaded();
         Mat image = Imgcodecs.imread(path, Imgcodecs.IMREAD_UNCHANGED);
         if (image.empty()) {
-            throw new IllegalArgumentException("Nao foi possivel abrir a imagem: " + path);
+            throw new PdiException(ExitCode.READ_ERROR, "Nao foi possivel abrir a imagem: " + path);
         }
         return image;
     }
@@ -21,17 +21,21 @@ public final class ImageIO {
     public static void write(String path, Mat image) {
         OpenCvRuntime.ensureLoaded();
         if (image == null || image.empty()) {
-            throw new IllegalArgumentException("A imagem de saida esta vazia.");
+            throw new PdiException(ExitCode.WRITE_ERROR, "A imagem de saida esta vazia.");
         }
 
         try {
             ResultIO.ensureParentDirectory(Path.of(path));
         } catch (IOException error) {
-            throw new IllegalStateException("Nao foi possivel criar o diretorio de saida: " + path, error);
+            throw new PdiException(
+                ExitCode.WRITE_ERROR,
+                "Nao foi possivel criar o diretorio de saida: " + path,
+                error
+            );
         }
 
         if (!Imgcodecs.imwrite(path, image)) {
-            throw new IllegalStateException("Nao foi possivel salvar a imagem: " + path);
+            throw new PdiException(ExitCode.WRITE_ERROR, "Nao foi possivel salvar a imagem: " + path);
         }
     }
 }
