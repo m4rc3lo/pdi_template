@@ -75,7 +75,7 @@ add_executable(pdi_lab src/main.cpp)
 target_link_libraries(pdi_lab PRIVATE pdi::core)
 
 # Os testes abaixo verificam apenas a infraestrutura fornecida.
-# Eles não implementam nem validam a corretude dos algoritmos avaliados.
+# Eles nao implementam nem validam a corretude dos algoritmos avaliados.
 if(BUILD_TESTING)
     add_executable(pdi_smoke_test tests/smoke_test.cpp)
     target_link_libraries(pdi_smoke_test PRIVATE pdi::core)
@@ -84,4 +84,13 @@ if(BUILD_TESTING)
     add_executable(pdi_infrastructure_test tests/infrastructure_test.cpp)
     target_link_libraries(pdi_infrastructure_test PRIVATE pdi::core)
     add_test(NAME pdi_infrastructure_test COMMAND pdi_infrastructure_test)
+
+    # Os testes usam caminhos relativos para as imagens-base. Definir a pasta
+    # do projeto como working directory torna o comportamento igual entre os
+    # diferentes diretórios de build gerados pelos presets.
+    set_tests_properties(
+        pdi_smoke_test
+        pdi_infrastructure_test
+        PROPERTIES WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    )
 endif()
