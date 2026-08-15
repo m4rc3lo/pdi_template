@@ -4,16 +4,23 @@ Esta variante utiliza Java 17+, Maven, JUnit e OpenCV desktop. O projeto-base de
 
 As operações avaliadas permanecem como **stubs**: a interface existe, mas o algoritmo ainda não foi implementado.
 
-## 1. O que é o `pom.xml`
+## 1. Java e Maven no Windows
 
-`pom.xml` significa *Project Object Model*. É o arquivo principal de configuração do Maven. Ele informa:
+No Windows, Java e Maven **não precisam ser instalados pelo `pacman` do MSYS2/UCRT64**. Use um JDK para Windows e uma distribuição do Maven para Windows; depois execute os mesmos comandos pelo PowerShell, CMD, Git Bash ou pelo terminal MSYS2 UCRT64, desde que `java`, `javac` e `mvn` estejam disponíveis no `PATH`.
 
-- identidade e versão do projeto;
-- versão do Java utilizada;
-- dependências externas;
-- framework de testes;
-- plugins de compilação e empacotamento;
-- classe principal do executável.
+Confirme o ambiente com:
+
+```bash
+java -version
+javac -version
+mvn -version
+```
+
+A versão do projeto é compilada para Java 17, portanto um JDK 17 ou mais recente pode ser utilizado.
+
+## 2. O que é o `pom.xml`
+
+`pom.xml` significa *Project Object Model*. É o arquivo principal de configuração do Maven. Ele informa identidade e versão do projeto, versão do Java, dependências externas, framework de testes, plugins de compilação e empacotamento e classe principal do executável.
 
 Você normalmente não precisa alterar o `pom.xml` para implementar os algoritmos dos laboratórios.
 
@@ -25,13 +32,15 @@ flowchart LR
     C --> E[target/pdi-lab.jar]
 ```
 
-## 2. OpenCV no Java
+O `pom.xml` é XML. Comentários XML têm regras próprias; por isso os exemplos de linha de comando ficam preferencialmente neste README e não dentro dos comentários XML do arquivo de construção.
+
+## 3. OpenCV no Java
 
 A dependência `org.openpnp:opencv` é utilizada para uma aplicação Java desktop. Ela disponibiliza os bindings Java e as bibliotecas nativas necessárias em plataformas suportadas.
 
 O carregamento da biblioteca é tratado pela infraestrutura do template. Em condições normais, o estudante não precisa configurar manualmente um caminho para a biblioteca nativa do OpenCV.
 
-## 3. Construção, testes e execução
+## 4. Construção, testes e execução
 
 Desde que `java` e `mvn` estejam disponíveis no `PATH`, os comandos são equivalentes no Windows e em sistemas Unix-like:
 
@@ -50,7 +59,7 @@ Os comandos têm responsabilidades diferentes:
 
 Maven também pode ser utilizado sem instalação administrativa: sua distribuição binária pode ser extraída em uma pasta do usuário e o diretório `bin` adicionado temporariamente ao `PATH`.
 
-## 4. Por que o JAR gerado é executável
+## 5. Por que o JAR gerado é executável
 
 O `maven-shade-plugin`, configurado no `pom.xml`, produz o arquivo `target/pdi-lab.jar` e registra `br.univali.pdi.Main` como ponto de entrada.
 
@@ -60,7 +69,7 @@ Isso permite executar diretamente:
 java -jar target/pdi-lab.jar --version
 ```
 
-## 5. Estrutura do código
+## 6. Estrutura do código
 
 ```text
 src/main/java/br/univali/pdi/   codigo da aplicacao
@@ -82,12 +91,12 @@ flowchart LR
     OP --> OUT[saida]
 ```
 
-## 6. Onde implementar
+## 7. Onde implementar
 
 Comece em `src/main/java/br/univali/pdi/Operations.java`. Você pode criar classes adicionais para separar responsabilidades e evitar que toda a solução fique em um único arquivo.
 
 Não concentre os algoritmos em `Main.java`. A classe `Main` coordena a execução; as operações de Processamento de Imagens devem permanecer separadas da infraestrutura.
 
-## 7. Regra didática principal
+## 8. Regra didática principal
 
 A infraestrutura pronta pode cuidar de argumentos, arquivos, carregamento do OpenCV, mensagens e erros gerais. O código desenvolvido para o laboratório continua responsável pelo conteúdo de Processamento de Imagens: percorrer pixels ou vizinhanças, realizar os cálculos solicitados, tratar corretamente os valores produzidos e gerar resultados coerentes.
