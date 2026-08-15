@@ -73,9 +73,8 @@
 
       <!--
         Gera um JAR executavel contendo tambem as dependencias necessarias.
-        Isso permite executar:
-
-          java -jar target/pdi-lab.jar --help
+        Ao final de mvn package, o arquivo target/pdi-lab.jar pode ser
+        executado diretamente com java -jar.
 
         ManifestResourceTransformer registra a classe Main no manifesto.
       -->
