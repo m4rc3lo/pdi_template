@@ -2,7 +2,28 @@
 
 Esta variante usa Python 3.10+, ambiente virtual (`venv`), OpenCV sem interface gráfica e `pytest`. As operações avaliadas permanecem como **stubs**: a interface existe, mas o algoritmo ainda deve ser implementado pelo estudante.
 
-## 1. Arquivos de construção e dependências
+## 1. Qual Python usar no Windows
+
+No Windows, use uma instalação **CPython para Windows** (por exemplo, a instalação oficial do Python) e não o interpretador Python distribuído pelo MSYS2/UCRT64.
+
+Isso é importante porque o `opencv-python-headless` é distribuído em wheels prontos para CPython/Windows. Se o ambiente virtual for criado a partir do Python do MSYS2/UCRT64, o `pip` pode não considerar esses wheels compatíveis e tentar compilar OpenCV e NumPy localmente, o que adiciona uma cadeia de compilação desnecessária para estes laboratórios.
+
+Antes de criar o ambiente, confira qual Python será usado:
+
+```bash
+python --version
+python -c "import sys; print(sys.executable)"
+```
+
+No Windows, se o comando `py` estiver disponível, esta é uma forma simples de garantir o uso do CPython para Windows:
+
+```bash
+py -3.13 -m venv .venv
+```
+
+Python 3.12 ou 3.13 são escolhas conservadoras para o ambiente da disciplina. O objetivo não é compilar OpenCV a partir do código-fonte; o objetivo é instalar o wheel pronto e trabalhar nos algoritmos do laboratório.
+
+## 2. Arquivos de construção e dependências
 
 ### `requirements.txt`
 
@@ -38,29 +59,30 @@ flowchart LR
     E --> F[python -m pdi_lab]
 ```
 
-## 2. Criar o ambiente virtual
+## 3. Criar e ativar o ambiente virtual
 
-Na raiz da pasta `python/`:
+Na raiz da pasta `python/`.
 
-```bash
-python -m venv .venv
-```
-
-Windows usando Git Bash ou MSYS2:
-
-```bash
-source .venv/Scripts/activate
-```
-
-PowerShell:
+### Windows — PowerShell
 
 ```powershell
+py -3.13 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-Linux/macOS:
+### Windows — Git Bash ou MSYS2 UCRT64 usando CPython para Windows
 
 ```bash
+py -3.13 -m venv .venv
+source .venv/Scripts/activate
+```
+
+Observe a pasta `Scripts/`. Se o ambiente criado no Windows apresentar `.venv/bin/activate`, verifique qual interpretador foi utilizado para criá-lo: provavelmente você criou o ambiente com um Python Unix-like/MSYS2 em vez do CPython para Windows.
+
+### Linux/macOS
+
+```bash
+python3 -m venv .venv
 source .venv/bin/activate
 ```
 
@@ -72,7 +94,9 @@ python -m pip install -r requirements.txt
 python -m pip install -e .
 ```
 
-## 3. Testar o projeto-base antes de começar
+Uma instalação normal deve baixar wheels binários. Se a saída indicar `Building wheel for opencv-python-headless`, interrompa e confira o interpretador e a plataforma antes de tentar compilar OpenCV localmente.
+
+## 4. Testar o projeto-base antes de começar
 
 ```bash
 python -m pytest
@@ -80,9 +104,9 @@ python -m pdi_lab --version
 python -m pdi_lab --help
 ```
 
-Os testes públicos verificam a infraestrutura: CLI, parâmetros, kernels, CSV e JSON. Eles não implementam nem avaliam os algoritmos exigidos nos laboratórios.
+Os testes públicos verificam a infraestrutura: CLI, parâmetros, kernels, imagem de entrada e saída, CSV e JSON. Eles não implementam nem avaliam os algoritmos exigidos nos laboratórios.
 
-## 4. Estrutura principal
+## 5. Estrutura principal
 
 ```text
 src/pdi_lab/
@@ -102,31 +126,15 @@ kernels/             kernels textuais
 results/             CSV, JSON e outros resultados
 ```
 
-## 5. Onde implementar
+## 6. Onde implementar
 
 Comece em `src/pdi_lab/operations.py` e crie módulos adicionais quando isso tornar o código mais claro.
 
-A infraestrutura já cuida de:
+A infraestrutura já cuida de argumentos de linha de comando, conversão e validação dos parâmetros básicos, leitura e escrita de imagens, criação dos diretórios de saída, leitura e validação estrutural de kernels, escrita de histogramas já calculados em CSV, escrita de metadados em JSON e tratamento dos principais erros de infraestrutura.
 
-- argumentos de linha de comando;
-- conversão e validação dos parâmetros básicos;
-- leitura e escrita de imagens;
-- criação dos diretórios de saída;
-- leitura e validação estrutural de kernels;
-- escrita de histogramas já calculados em CSV;
-- escrita de metadados em JSON;
-- tratamento dos principais erros de infraestrutura.
+O estudante continua responsável por percorrer pixels ou vizinhanças, implementar as fórmulas solicitadas, calcular histogramas, implementar convolução e filtros, controlar saturação e tipos numéricos quando fizer parte do algoritmo, testar e analisar os resultados.
 
-O estudante continua responsável por:
-
-- percorrer pixels ou vizinhanças;
-- implementar as fórmulas solicitadas;
-- calcular histogramas;
-- implementar convolução, tratamento matemático de bordas e filtros;
-- controlar saturação e tipos numéricos quando fizer parte do algoritmo;
-- testar e analisar os resultados.
-
-## 6. Exemplos de interface
+## 7. Exemplos de interface
 
 ```bash
 python -m pdi_lab \
@@ -147,12 +155,12 @@ python -m pdi_lab \
 
 Enquanto a operação continuar como stub, o comando será reconhecido, mas informará que o algoritmo ainda não foi implementado.
 
-## 7. Máquina restrita ou offline
+## 8. Máquina restrita ou offline
 
-Os wheels podem ser baixados previamente em outra máquina compatível:
+Os wheels podem ser baixados previamente em outra máquina **com a mesma plataforma e versão de Python**:
 
 ```bash
-python -m pip download -r requirements.txt -d packages
+python -m pip download --only-binary=:all: -r requirements.txt -d packages
 ```
 
 Depois, na máquina restrita:
@@ -162,6 +170,8 @@ python -m pip install --no-index --find-links packages -r requirements.txt
 python -m pip install -e .
 ```
 
-## 8. OpenCV headless
+O uso de `--only-binary=:all:` é intencional: se não existir wheel compatível, o download deve falhar claramente em vez de preparar silenciosamente uma compilação local do OpenCV.
+
+## 9. OpenCV headless
 
 A versão `opencv-python-headless` não fornece janelas de interface gráfica como `cv2.imshow`. Isso é intencional: os laboratórios usam arquivos de entrada e saída, favorecendo execução reproduzível em terminal, máquinas de laboratório e correção automatizada.
