@@ -7,7 +7,7 @@ As três linguagens utilizam as mesmas categorias de código de saída. Isso per
 | `0` | `success` | execução concluída com sucesso |
 | `1` | `general_error` | erro não classificado em outra categoria |
 | `2` | `invalid_arguments` | argumento obrigatório ausente ou estrutura da CLI inválida |
-| `3` | `read_error` | falha ao abrir uma imagem, kernel ou outro arquivo de entrada |
+| `3` | `read_error` | falha ao localizar ou abrir uma imagem, kernel ou outro arquivo de entrada |
 | `4` | `write_error` | falha ao criar diretório ou gravar imagem, CSV ou JSON |
 | `5` | `invalid_parameter` | parâmetro presente, porém com valor inválido |
 | `6` | `unknown_operation` | nome de operação não reconhecido |
@@ -22,13 +22,13 @@ Um comando como:
 
 não deve chegar ao algoritmo. O contrato identifica que `300` está fora do intervalo esperado e retorna `invalid_parameter`.
 
-Já um arquivo de entrada inexistente deve resultar em `read_error` quando a infraestrutura tentar abri-lo.
+Da mesma forma, a infraestrutura faz uma validação preliminar dos arquivos de entrada. Se a imagem informada não existir ou não for um arquivo regular, a execução retorna `read_error` antes do despacho para o algoritmo. Para a convolução genérica, o mesmo princípio é aplicado ao arquivo informado em `--kernel`.
 
 ```mermaid
 flowchart TD
     A[Comando] --> B{CLI valida?}
     B -- não --> C[codigo 2, 5 ou 6]
-    B -- sim --> D{Entrada pode ser lida?}
+    B -- sim --> D{Arquivos de entrada existem?}
     D -- não --> E[codigo 3]
     D -- sim --> F[algoritmo]
     F --> G{Saida pode ser gravada?}
