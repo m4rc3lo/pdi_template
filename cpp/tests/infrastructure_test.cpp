@@ -17,8 +17,8 @@ int main()
     // Validação de parâmetros tipados e regras do contrato.
     pdi::CliOptions quantize;
     quantize.operation = "quantize";
-    quantize.input = "in.png";
-    quantize.output = "out.png";
+    quantize.input = "images/input/m1_gray_ramp_256.png";
+    quantize.output = "images/output/out.png";
     quantize.parameters["levels"] = "8";
     assert(pdi::validate_contract(quantize));
     assert(pdi::parameter_as_int(quantize, "levels") == 8);
@@ -26,11 +26,19 @@ int main()
     quantize.parameters["levels"] = "3";
     assert(!pdi::validate_contract(quantize));
 
+    pdi::CliOptions missing_input;
+    missing_input.operation = "negative";
+    missing_input.input = "images/input/nao_existe.png";
+    missing_input.output = "images/output/out.png";
+    const auto missing_validation = pdi::validate_contract(missing_input);
+    assert(!missing_validation);
+    assert(missing_validation.code == pdi::ExitCode::read_error);
+
     pdi::CliOptions convolution;
     convolution.operation = "convolution";
-    convolution.input = "in.png";
-    convolution.output = "out.png";
-    convolution.parameters["kernel"] = "kernel.txt";
+    convolution.input = "images/input/m1_gray_5x5.png";
+    convolution.output = "images/output/out.png";
+    convolution.parameters["kernel"] = "kernels/identity_3x3.txt";
     convolution.parameters["border"] = "replicate";
     assert(pdi::validate_contract(convolution));
     assert(pdi::parameter_as_border(convolution) == pdi::BorderStrategy::replicate);
