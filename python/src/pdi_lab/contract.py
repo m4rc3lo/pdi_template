@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from . import exit_code
 from .cli import CliOptions
@@ -80,7 +81,13 @@ def _validate_parameters(options: CliOptions) -> ValidationResult:
             required = _require(options, "border")
             if not required.ok:
                 return required
-            parameter_as_path(options, "kernel")
+
+            kernel_path = parameter_as_path(options, "kernel")
+            if not Path(kernel_path).is_file():
+                return ValidationResult(
+                    exit_code.READ_ERROR,
+                    f"Nao foi possivel abrir o kernel: {kernel_path}",
+                )
             parameter_as_border(options)
 
         elif options.operation == "mean_filter":
@@ -120,6 +127,11 @@ def validate_contract(options: CliOptions) -> ValidationResult:
         )
     if not options.input:
         return ValidationResult(exit_code.INVALID_ARGUMENTS, "Informe --input.")
+    if not Path(options.input).is_file():
+        return ValidationResult(
+            exit_code.READ_ERROR,
+            f"Nao foi possivel abrir a imagem: {options.input}",
+        )
     if options.operation != "inspect" and not options.output:
         return ValidationResult(exit_code.INVALID_ARGUMENTS, "Informe --output.")
 
