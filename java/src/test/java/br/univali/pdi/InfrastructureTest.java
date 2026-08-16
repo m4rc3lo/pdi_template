@@ -11,11 +11,11 @@ import org.opencv.core.Mat;
 
 public class InfrastructureTest {
     @Test
-    public void validatesTypedParameters() {
+    public void validatesTypedParametersAndMissingInput() {
         CliOptions options = new CliOptions();
         options.operation = "quantize";
-        options.input = "in.png";
-        options.output = "out.png";
+        options.input = "images/input/m1_gray_ramp_256.png";
+        options.output = "images/output/out.png";
         options.parameters.put("levels", "8");
 
         assertTrue(Contract.validate(options).ok());
@@ -23,6 +23,15 @@ public class InfrastructureTest {
 
         options.parameters.put("levels", "3");
         assertFalse(Contract.validate(options).ok());
+
+        CliOptions missingInput = new CliOptions();
+        missingInput.operation = "negative";
+        missingInput.input = "images/input/nao_existe.png";
+        missingInput.output = "images/output/out.png";
+
+        Contract.Result missingResult = Contract.validate(missingInput);
+        assertFalse(missingResult.ok());
+        assertEquals(ExitCode.READ_ERROR, missingResult.code());
     }
 
     @Test
