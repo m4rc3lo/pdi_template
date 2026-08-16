@@ -5,6 +5,7 @@
 
 #include <array>
 #include <exception>
+#include <filesystem>
 #include <string>
 
 namespace pdi {
@@ -61,7 +62,14 @@ ValidationResult validate_typed_parameters(const CliOptions& options)
             if (!required) return required;
             required = require_parameter(options, "border");
             if (!required) return required;
-            (void)parameter_as_path(options, "kernel");
+
+            const auto kernel_path = parameter_as_path(options, "kernel");
+            if (!std::filesystem::is_regular_file(kernel_path)) {
+                return {
+                    ExitCode::read_error,
+                    "Nao foi possivel abrir o kernel: " + kernel_path.string()
+                };
+            }
             (void)parameter_as_border(options);
         }
 
@@ -109,6 +117,12 @@ ValidationResult validate_contract(const CliOptions& options)
     }
     if (!options.input.has_value() || options.input->empty()) {
         return {ExitCode::invalid_arguments, "Informe --input."};
+    }
+    if (!std::filesystem::is_regular_file(*options.input)) {
+        return {
+            ExitCode::read_error,
+            "Nao foi possivel abrir a imagem: " + *options.input
+        };
     }
     if (options.operation != "inspect" &&
         (!options.output.has_value() || options.output->empty())) {
