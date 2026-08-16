@@ -1,5 +1,7 @@
 package br.univali.pdi;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Set;
 
 /** Validação comum da interface externa das três linguagens. */
@@ -26,6 +28,12 @@ public final class Contract {
         }
         if (options.input == null || options.input.isBlank()) {
             return new Result(ExitCode.INVALID_ARGUMENTS, "Informe --input.");
+        }
+        if (!Files.isRegularFile(Path.of(options.input))) {
+            return new Result(
+                ExitCode.READ_ERROR,
+                "Nao foi possivel abrir a imagem: " + options.input
+            );
         }
         if (!"inspect".equals(options.operation) &&
             (options.output == null || options.output.isBlank())) {
@@ -84,7 +92,14 @@ public final class Contract {
                 if (!required.ok()) return required;
                 required = require(options, "border");
                 if (!required.ok()) return required;
-                Parameters.asPath(options, "kernel");
+
+                Path kernelPath = Parameters.asPath(options, "kernel");
+                if (!Files.isRegularFile(kernelPath)) {
+                    return new Result(
+                        ExitCode.READ_ERROR,
+                        "Nao foi possivel abrir o kernel: " + kernelPath
+                    );
+                }
                 Parameters.asBorder(options);
             }
             case "mean_filter" -> {
