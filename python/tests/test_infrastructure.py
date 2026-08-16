@@ -11,8 +11,8 @@ from pdi_lab.result_io import write_histogram_csv, write_json_object
 def test_typed_parameters_and_contract():
     options = CliOptions(
         operation="quantize",
-        input="in.png",
-        output="out.png",
+        input="images/input/m1_gray_ramp_256.png",
+        output="images/output/out.png",
         parameters={"levels": "8"},
     )
     assert validate_contract(options).ok
@@ -23,9 +23,12 @@ def test_typed_parameters_and_contract():
 
     convolution = CliOptions(
         operation="convolution",
-        input="in.png",
-        output="out.png",
-        parameters={"kernel": "kernel.txt", "border": "replicate"},
+        input="images/input/m1_gray_5x5.png",
+        output="images/output/out.png",
+        parameters={
+            "kernel": "kernels/identity_3x3.txt",
+            "border": "replicate",
+        },
     )
     assert validate_contract(convolution).ok
     assert parameter_as_border(convolution) is BorderStrategy.REPLICATE
