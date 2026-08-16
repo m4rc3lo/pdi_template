@@ -6,6 +6,8 @@ Este pacote contém três projetos-base equivalentes para os laboratórios indiv
 - `java/` — Java 17+ + Maven + OpenPnP OpenCV;
 - `python/` — Python 3.10+ + `venv` + OpenCV headless + pytest.
 
+Versão do projeto-base: **0.2.0**. Versão do contrato externo: **2**.
+
 As três versões preservam o mesmo contrato externo de execução. A linguagem muda; o que será solicitado e avaliado permanece equivalente.
 
 ## O objetivo do template
@@ -144,8 +146,17 @@ A pasta `docs/` complementa os READMEs:
 - `00-padrao-comum-das-tres-linguagens.md` — o que deve ser equivalente;
 - `01-como-usar-o-template.md` — sequência recomendada de trabalho;
 - `02-interface-cli.md` — contrato da linha de comando;
+- `03-validacao-manual.md` — verificações manuais de apoio;
 - `04-entrada-saida-e-kernels.md` — imagens, CSV, JSON e kernels;
 - `05-testes-publicos.md` — diferença entre testar infraestrutura e algoritmo;
-- `90-validacao-manual-antes-do-release.md` — checklist usado pelo professor antes da publicação do template.
+- `06-erros-e-codigos-de-saida.md` — categorias padronizadas de erro e códigos de saída.
 
 Depois consulte o `README.md` da linguagem escolhida para os comandos específicos de construção, instalação, teste e execução.
+
+## Licença e citação
+
+Este projeto-base é disponibilizado sob a **Apache License 2.0**. Consulte `LICENSE` para o texto integral da licença.
+
+Os metadados acadêmicos e de software estão em `CITATION.cff`. Se o projeto-base for citado em relatório, artigo, material didático ou trabalho derivado, utilize preferencialmente os dados registrados nesse arquivo.
+
+As bibliotecas e ferramentas de terceiros utilizadas pelo projeto mantêm suas próprias licenças e condições de distribuição.
