@@ -49,14 +49,26 @@ bool is_known_operation(std::string_view operation)
 
 ExitCode run_operation(const CliOptions& options)
 {
-    // Este é deliberadamente um stub.
+    // A infraestrutura anterior a este ponto já cuidou da sintaxe da CLI,
+    // da presença dos arquivos e da validação dos parâmetros gerais.
+    // A partir daqui começa a parte avaliada do laboratório.
     //
-    // A infraestrutura anterior a este ponto já cuidou da sintaxe básica da
-    // CLI e dos parâmetros gerais. O estudante deve substituir o despacho
-    // deste stub por funções/classes que implementem as operações solicitadas.
+    // TODO(aluno) M1.1: implementar inspect, copy, channel_b, channel_g,
+    // channel_r, grayscale_average, grayscale_weighted e quantize.
     //
-    // Não implemente os algoritmos diretamente em main.cpp. Mantenha o código
-    // de Processamento de Imagens separado da infraestrutura da aplicação.
+    // TODO(aluno) M1.2: implementar brightness, contrast, negative,
+    // threshold e histogram. O template fornece apenas a serialização CSV;
+    // a contagem dos 256 níveis continua sendo responsabilidade do aluno.
+    //
+    // TODO(aluno) M1.3: implementar convolution, mean_filter,
+    // weighted_mean, laplacian e sobel. O leitor de kernel fornecido apenas
+    // valida e disponibiliza os coeficientes; ele não aplica convolução.
+    //
+    // Organize as implementações em funções/classes auxiliares e faça aqui
+    // somente o despacho por operação. Não coloque os algoritmos em main.cpp
+    // e não substitua os percursos manuais pedidos no roteiro por chamadas
+    // prontas equivalentes do OpenCV.
+
     std::cerr
         << "Operacao '" << options.operation
         << "' reconhecida, mas ainda nao implementada no projeto-base.\n";
