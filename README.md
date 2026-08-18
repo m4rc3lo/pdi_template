@@ -10,6 +10,8 @@ Versão do projeto-base: **0.2.0**. Versão do contrato externo: **2**.
 
 As três versões preservam o mesmo contrato externo de execução. A linguagem muda; o que será solicitado e avaliado permanece equivalente.
 
+> **Comece pela preparação do ambiente.** Antes de alterar código, leia `docs/07-preparacao-do-ambiente-e-erros-comuns.md`. Esse guia reúne os cuidados com MSYS2/UCRT64, CMake/OpenCV, JDK/Maven, CPython/`venv`, `PATH`, caminhos, dependências e os erros mais comuns observados durante a validação do projeto-base.
+
 ## O objetivo do template
 
 A intenção é permitir que você concentre seu tempo nos algoritmos de Processamento de Imagens. A infraestrutura geral já cuida de:
@@ -39,22 +41,23 @@ flowchart LR
 
 ## Escolha apenas uma linguagem
 
-Você não precisa desenvolver o mesmo laboratório três vezes. Escolha uma das pastas e trabalhe somente nela.
+Você não precisa desenvolver o mesmo laboratório três vezes. Baixe o ZIP do repositório, escolha uma das pastas e trabalhe somente nela.
 
 ```mermaid
 flowchart TD
-    A[Extrair o pacote] --> B{Escolher linguagem}
+    A[Baixar e extrair o ZIP] --> B{Escolher linguagem}
     B --> C[C++]
     B --> D[Java]
     B --> E[Python]
-    C --> F[Ler o README da linguagem]
+    C --> F[Ler guia de ambiente e README da linguagem]
     D --> F
     E --> F
     F --> G[Preparar o ambiente]
     G --> H[Executar testes do template]
-    H --> I[Implementar o laboratorio]
-    I --> J[Gerar resultados]
-    J --> K[Preencher REPORT.md e AI_USAGE.md]
+    H --> I[Localizar os TODO de implementação]
+    I --> J[Implementar o laboratorio]
+    J --> K[Gerar resultados]
+    K --> L[Preencher REPORT.md e AI_USAGE.md]
 ```
 
 ## Contrato comum de execução
@@ -95,6 +98,12 @@ A validação desses valores é fornecida pelo projeto-base. O estudante não pr
 
 As atividades complementares dos roteiros não são transformadas em requisitos adicionais do contrato mínimo.
 
+## Onde começar a implementar
+
+Nas três linguagens, a infraestrutura e os pontos destinados ao trabalho do estudante estão separados. Procure por comentários iniciados por `TODO(aluno)`. Eles marcam deliberadamente a fronteira entre o código fornecido e as implementações avaliadas.
+
+Não remova a infraestrutura de CLI, validação, leitura/escrita e testes apenas para simplificar a implementação. A intenção do projeto-base é manter um contrato reproduzível e equivalente entre as linguagens.
+
 ## Estrutura comum
 
 Cada implementação possui, com pequenas diferenças próprias da linguagem:
@@ -130,12 +139,14 @@ A estrutura interna não precisa ser artificialmente idêntica: C++, Java e Pyth
 
 ## Antes de implementar o laboratório
 
-1. leia o `README.md` da linguagem escolhida;
-2. prepare o ambiente;
-3. construa ou instale o projeto;
-4. execute os testes públicos;
-5. execute `--help` e `--version`;
-6. somente depois comece a alterar as operações do laboratório.
+1. leia `docs/07-preparacao-do-ambiente-e-erros-comuns.md`;
+2. leia o `README.md` da linguagem escolhida;
+3. prepare o ambiente;
+4. construa ou instale o projeto;
+5. execute os testes públicos;
+6. execute `--help` e `--version`;
+7. localize os `TODO(aluno)`;
+8. somente depois comece a implementar as operações do laboratório.
 
 Se a base recém-extraída não passa nos testes públicos, investigue o ambiente antes de modificar os algoritmos.
 
@@ -149,7 +160,8 @@ A pasta `docs/` complementa os READMEs:
 - `03-validacao-manual.md` — verificações manuais de apoio;
 - `04-entrada-saida-e-kernels.md` — imagens, CSV, JSON e kernels;
 - `05-testes-publicos.md` — diferença entre testar infraestrutura e algoritmo;
-- `06-erros-e-codigos-de-saida.md` — categorias padronizadas de erro e códigos de saída.
+- `06-erros-e-codigos-de-saida.md` — categorias padronizadas de erro e códigos de saída;
+- **`07-preparacao-do-ambiente-e-erros-comuns.md` — guia recomendado antes de começar, com instalação, configuração, `PATH`, ambientes e diagnóstico.**
 
 Depois consulte o `README.md` da linguagem escolhida para os comandos específicos de construção, instalação, teste e execução.
 
